@@ -22,6 +22,7 @@ public class AutoGetInfoScheduler {
 
     @Scheduled(cron = "10 * * * * *")
     public void getJupJup() throws IOException {
+        log.info("============getJupJup is Call");
         Properties properties = new Properties();
 
         try {
