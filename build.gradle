@@ -5,6 +5,9 @@ plugins {
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
+war{
+    baseName='jupjupWar'
+}
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -22,14 +25,13 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compile("org.springframework.boot:spring-boot-starter-logging")
     compileOnly 'org.projectlombok:lombok'
-    // https://mvnrepository.com/artifact/org.jsoup/jsoup
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
     compile('javax.servlet:jstl')
     compile('org.apache.tomcat.embed:tomcat-embed-jasper')
     compile('org.springframework.boot:spring-boot-starter-tomcat')
-    compile group: 'org.webjars', name: 'jquery', version: '3.3.1'
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
+    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
