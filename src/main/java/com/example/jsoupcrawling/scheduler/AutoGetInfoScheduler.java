@@ -30,7 +30,6 @@ public class AutoGetInfoScheduler {
             e.printStackTrace();
         }
 
-        log.info("test = {}", properties.getProperty("jupjup.site.url"));
         String connUrl = properties.getProperty("jupjup.site.url");
         Document doc = Jsoup.connect(connUrl).get();
         Elements titles = doc.select("div.f_s span");
@@ -50,6 +49,10 @@ public class AutoGetInfoScheduler {
             }
         }else{
             messageList.add("줍줍이 없다");
+        }
+
+        for(String message : messageList){
+            log.info("message = {}",message);
         }
     }
 }
