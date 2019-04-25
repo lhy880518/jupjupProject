@@ -25,7 +25,7 @@ public class AutoGetInfoScheduler {
     @Autowired
     private messageSendService messageSendService;
 
-    @Scheduled(cron = "40 18 * * * *")
+    @Scheduled(cron = "10 * * * * *")
     public void getJupJup() throws IOException {
         log.info("============getJupJup is Call");
         Properties properties = new Properties();
