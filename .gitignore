@@ -3,6 +3,7 @@ HELP.md
 /build/
 !gradle/wrapper/gradle-wrapper.jar
 /src/main/resources/static/secureInfo.properties
+/src/test/resources/static/secureInfo.properties
 /catalina.home_IS_UNDEFINED/
 
 ### STS ###
