@@ -1,105 +1,46 @@
-package com.example.jsoupcrawling;
+package com.example.jsoupcrawling.service.impl;
 
+import com.example.jsoupcrawling.service.messageSendService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Properties;
 
-@RunWith(SpringRunner.class)
+@Service
 @Slf4j
-@TestPropertySource("classpath:static/secureInfo.properties")
-@Ignore
-public class JsoupcrawlingApplicationTests {
+public class messageSendServiceImpl implements messageSendService {
 
-    @Value("${host.name.url}")
-    private String hostNameUrl;
+    final String resource = "/src/main/resources/static/secureInfo.properties";
 
-    @Value("${request.url}")
-    private String requestUrl;
+    @Override
+    public void send(String message) {
 
-    @Value("${request.url.type}")
-    private String requestUrlType;
+        Properties properties = new Properties();
 
-    @Value("${access.key}")
-    private String accessKey;
+        try {
+            properties.load(new FileReader(resource));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    @Value("${secret.key}")
-    private String secretKey;
-
-    @Value("${service.id}")
-    private String serviceId;
-
-    @Value("${method}")
-    private String method;
-
-    @Value("${send.phone.number}")
-    private String sendPhoneNumber;
-
-    @Test
-    public void SendSmsTest() {
-
-        String hostNameUrl = this.hostNameUrl;
-        String requestUrl= this.requestUrl;
-        String requestUrlType = this.requestUrlType;
-        String accessKey = this.accessKey;
-        String secretKey = this.secretKey;
-        String serviceId = this.serviceId;
-        String method = this.method;
-        String sendPhoneNumber = this.sendPhoneNumber;
+        String hostNameUrl = properties.getProperty("host.name.url");
+        String requestUrl= properties.getProperty("request.url");
+        String requestUrlType = properties.getProperty("request.url.type");
+        String accessKey = properties.getProperty("access.key");
+        String secretKey = properties.getProperty("secret.key");
+        String serviceId = properties.getProperty("service.id");
+        String method = properties.getProperty("method");
+        String sendPhoneNumber = properties.getProperty("send.phone.number");
         String timestamp = Long.toString(System.currentTimeMillis()); 	// current timestamp (epoch)
         requestUrl += serviceId + requestUrlType;
         String apiUrl = hostNameUrl + requestUrl;
-
-        // JSON 을 활용한 body data 생성
-		/*
-		JSONObject bodyJson = new JSONObject();
-		JSONObject toJson = new JSONObject();
-	    JSONArray  toArr = new JSONArray();
-
-	    toJson.put("subject","");				// 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-	    toJson.put("content","");				// 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
-	    toJson.put("to","");					// 수신번호 목록  * 최대 50개까지 한번에 전송할 수 있습니다.
-	    toArr.add(toJson);
-
-	    bodyJson.put("type","");				// 메시지 Type (sms | lms)
-	    bodyJson.put("contentType","");			// 메시지 내용 Type (AD | COMM) * AD: 광고용, COMM: 일반용 (default: COMM) * 광고용 메시지 발송 시 불법 스팸 방지를 위한 정보통신망법 (제 50조)가 적용됩니다.
-	    bodyJson.put("countryCode","");			// 국가 전화번호
-	    bodyJson.put("from","");				// 발신번호 * 사전에 인증/등록된 번호만 사용할 수 있습니다.
-	    bodyJson.put("subject","");				// 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-	    bodyJson.put("content","");				// 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
-	    bodyJson.put("messages", toArr);
-
-
-	    String body = bodyJson.toJSONString();
-	    */
 
         // String으로 body data 생성
         StringBuilder body = new StringBuilder();
@@ -112,13 +53,13 @@ public class JsoupcrawlingApplicationTests {
         body.append("\",\r\n");
         body.append("  \"subject\": \"Daily 줍줍\",\r\n");
         body.append("  \"content\": \"");
-        body.append("message");
+        body.append(message);
         body.append("\",\r\n");
         body.append("  \"messages\": [\r\n");
         body.append("    {");
         body.append("  		\"subject\": \"Daily 줍줍\",\r\n");
         body.append("  		\"content\": \"");
-        body.append("message");
+        body.append(message);
         body.append("\",\r\n");
         body.append("  		\"to\": \"");
         body.append(sendPhoneNumber);
@@ -149,7 +90,6 @@ public class JsoupcrawlingApplicationTests {
 
             int responseCode = con.getResponseCode();
             BufferedReader br;
-            System.out.println(responseCode);
             if(responseCode==202) { // 정상 호출
                 br = new BufferedReader(new InputStreamReader(con.getInputStream()));
             } else {  // 에러 발생
@@ -163,10 +103,10 @@ public class JsoupcrawlingApplicationTests {
             }
             br.close();
 
-            System.out.println(response.toString());
+            log.info("response.toString() = {}",response.toString());
 
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("Exception = {}",e);
         }
     }
 

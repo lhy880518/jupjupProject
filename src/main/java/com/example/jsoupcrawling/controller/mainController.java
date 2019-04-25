@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 @Controller
 public class mainController {
-    @GetMapping("/")
-    public String mainPage(){
-        log.info("mainPage");
-        System.out.println("mainPage");
-        return "/main";
-    }
+
+//    @GetMapping("/")
+//    public String mainPage(){
+//        log.info("mainPage");
+//        return "/main";
+//    }
 
 }
