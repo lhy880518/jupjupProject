@@ -26,19 +26,9 @@ public class AutoGetInfoScheduler {
 
     /**
      * 오전 11시 마다 JupJup관련 sms를 발송합니다. 월~금만 사용
-     *
-     * For example, suites in JUnit 4 are built using RunWith, and a custom runner named Suite:
-     *
-     * <pre>
-     * &#064;RunWith(Suite.class)
-     * &#064;SuiteClasses({ATest.class, BTest.class, CTest.class})
-     * public class ABCSuite {
-     * }
-     * </pre>
-     *
-     * @since 4.0
+     * made by lhy
      */
-    @Scheduled(cron = "* * 11 ? * MON-FRI")
+    @Scheduled(cron = "0 0 11 ? * MON-FRI")
     public void getJupJup() throws IOException {
         log.info("============getJupJup is Call");
 
