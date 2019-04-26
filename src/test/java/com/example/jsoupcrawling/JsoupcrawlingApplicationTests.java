@@ -1,42 +1,19 @@
 package com.example.jsoupcrawling;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
 
 @RunWith(SpringRunner.class)
-@Slf4j
-@TestPropertySource("classpath:static/secureInfo.properties")
-@Ignore
+@TestPropertySource("classpath:static/properties/secureInfo.properties")
 public class JsoupcrawlingApplicationTests {
 
     @Value("${host.name.url}")
@@ -77,6 +54,7 @@ public class JsoupcrawlingApplicationTests {
         String timestamp = Long.toString(System.currentTimeMillis()); 	// current timestamp (epoch)
         requestUrl += serviceId + requestUrlType;
         String apiUrl = hostNameUrl + requestUrl;
+        System.out.println(apiUrl);
 
         // JSON 을 활용한 body data 생성
 		/*
@@ -102,72 +80,72 @@ public class JsoupcrawlingApplicationTests {
 	    */
 
         // String으로 body data 생성
-        StringBuilder body = new StringBuilder();
-        body.append("{\r\n");
-        body.append("  \"type\": \"SMS\",\r\n");
-        body.append("  \"contentType\": \"COMM\",\r\n");
-        body.append("  \"countryCode\": \"82\",\r\n");
-        body.append("  \"from\": \"");
-        body.append(sendPhoneNumber);
-        body.append("\",\r\n");
-        body.append("  \"subject\": \"Daily 줍줍\",\r\n");
-        body.append("  \"content\": \"");
-        body.append("message");
-        body.append("\",\r\n");
-        body.append("  \"messages\": [\r\n");
-        body.append("    {");
-        body.append("  		\"subject\": \"Daily 줍줍\",\r\n");
-        body.append("  		\"content\": \"");
-        body.append("message");
-        body.append("\",\r\n");
-        body.append("  		\"to\": \"");
-        body.append(sendPhoneNumber);
-        body.append("\"\r\n");
-        body.append("		}\r\n");
-        body.append("  ]\r\n");
-        body.append("}");
-
-        try {
-
-            URL url = new URL(apiUrl);
-
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setUseCaches(false);
-            con.setDoOutput(true);
-            con.setDoInput(true);
-            con.setRequestProperty("content-type", "application/json");
-            con.setRequestProperty("x-ncp-apigw-timestamp", timestamp);
-            con.setRequestProperty("x-ncp-iam-access-key", accessKey);
-            con.setRequestProperty("x-ncp-apigw-signature-v2", makeSignature(requestUrl, timestamp, method, accessKey, secretKey));
-            con.setRequestMethod(method);
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-
-            wr.write(body.toString().getBytes());
-            wr.flush();
-            wr.close();
-
-            int responseCode = con.getResponseCode();
-            BufferedReader br;
-            System.out.println(responseCode);
-            if(responseCode==202) { // 정상 호출
-                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            } else {  // 에러 발생
-                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-            }
-
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);
-            }
-            br.close();
-
-            System.out.println(response.toString());
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+//        StringBuilder body = new StringBuilder();
+//        body.append("{\r\n");
+//        body.append("  \"type\": \"SMS\",\r\n");
+//        body.append("  \"contentType\": \"COMM\",\r\n");
+//        body.append("  \"countryCode\": \"82\",\r\n");
+//        body.append("  \"from\": \"");
+//        body.append(sendPhoneNumber);
+//        body.append("\",\r\n");
+//        body.append("  \"subject\": \"Daily 줍줍\",\r\n");
+//        body.append("  \"content\": \"");
+//        body.append("message");
+//        body.append("\",\r\n");
+//        body.append("  \"messages\": [\r\n");
+//        body.append("    {");
+//        body.append("  		\"subject\": \"Daily 줍줍\",\r\n");
+//        body.append("  		\"content\": \"");
+//        body.append("message");
+//        body.append("\",\r\n");
+//        body.append("  		\"to\": \"");
+//        body.append(sendPhoneNumber);
+//        body.append("\"\r\n");
+//        body.append("		}\r\n");
+//        body.append("  ]\r\n");
+//        body.append("}");
+//
+//        try {
+//
+//            URL url = new URL(apiUrl);
+//
+//            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+//            con.setUseCaches(false);
+//            con.setDoOutput(true);
+//            con.setDoInput(true);
+//            con.setRequestProperty("content-type", "application/json");
+//            con.setRequestProperty("x-ncp-apigw-timestamp", timestamp);
+//            con.setRequestProperty("x-ncp-iam-access-key", accessKey);
+//            con.setRequestProperty("x-ncp-apigw-signature-v2", makeSignature(requestUrl, timestamp, method, accessKey, secretKey));
+//            con.setRequestMethod(method);
+//            con.setDoOutput(true);
+//            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+//
+//            wr.write(body.toString().getBytes());
+//            wr.flush();
+//            wr.close();
+//
+//            int responseCode = con.getResponseCode();
+//            BufferedReader br;
+//            System.out.println(responseCode);
+//            if(responseCode==202) { // 정상 호출
+//                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+//            } else {  // 에러 발생
+//                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+//            }
+//
+//            String inputLine;
+//            StringBuffer response = new StringBuffer();
+//            while ((inputLine = br.readLine()) != null) {
+//                response.append(inputLine);
+//            }
+//            br.close();
+//
+//            System.out.println(response.toString());
+//
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
     }
 
     public static String makeSignature(String url, String timestamp, String method, String accessKey, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {

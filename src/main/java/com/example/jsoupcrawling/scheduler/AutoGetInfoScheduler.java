@@ -6,37 +6,43 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Component
 @Slf4j
 public class AutoGetInfoScheduler {
 
-    final String resource = "/src/main/resources/static/secureInfo.properties";
+    @Autowired
+    Environment environment;
 
     @Autowired
     private messageSendService messageSendService;
 
-    @Scheduled(cron = "10 * * * * *")
+    /**
+     * 오전 11시 마다 JupJup관련 sms를 발송합니다. 월~금만 사용
+     *
+     * For example, suites in JUnit 4 are built using RunWith, and a custom runner named Suite:
+     *
+     * <pre>
+     * &#064;RunWith(Suite.class)
+     * &#064;SuiteClasses({ATest.class, BTest.class, CTest.class})
+     * public class ABCSuite {
+     * }
+     * </pre>
+     *
+     * @since 4.0
+     */
+    @Scheduled(cron = "* * 11 ? * MON-FRI")
     public void getJupJup() throws IOException {
         log.info("============getJupJup is Call");
-        Properties properties = new Properties();
 
-        try {
-            properties.load(new FileReader(resource));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String connUrl = properties.getProperty("jupjup.site.url");
+        String connUrl = environment.getProperty("jupjup.site.url");
         Document doc = Jsoup.connect(connUrl).get();
         Elements titles = doc.select("div.f_s span");
         Elements names = doc.select("div.name span.txt");
@@ -58,6 +64,7 @@ public class AutoGetInfoScheduler {
         }
 
         for(String message : messageList){
+            log.info("message = {}",message);
             messageSendService.send(message);
         }
     }

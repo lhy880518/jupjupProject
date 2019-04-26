@@ -9,7 +9,7 @@
 
 </head>
 <body>
-mainPagemainPagemainPagemainPage
+this is Main Page
 </body>
 <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">

@@ -2,6 +2,8 @@ package com.example.jsoupcrawling.service.impl;
 
 import com.example.jsoupcrawling.service.messageSendService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -17,27 +19,20 @@ import java.util.Properties;
 @Slf4j
 public class messageSendServiceImpl implements messageSendService {
 
-    final String resource = "/src/main/resources/static/secureInfo.properties";
+    @Autowired
+    Environment environment;
 
     @Override
     public void send(String message) {
 
-        Properties properties = new Properties();
-
-        try {
-            properties.load(new FileReader(resource));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String hostNameUrl = properties.getProperty("host.name.url");
-        String requestUrl= properties.getProperty("request.url");
-        String requestUrlType = properties.getProperty("request.url.type");
-        String accessKey = properties.getProperty("access.key");
-        String secretKey = properties.getProperty("secret.key");
-        String serviceId = properties.getProperty("service.id");
-        String method = properties.getProperty("method");
-        String sendPhoneNumber = properties.getProperty("send.phone.number");
+        String hostNameUrl = environment.getProperty("host.name.url");
+        String requestUrl= environment.getProperty("request.url");
+        String requestUrlType = environment.getProperty("request.url.type");
+        String accessKey = environment.getProperty("access.key");
+        String secretKey = environment.getProperty("secret.key");
+        String serviceId = environment.getProperty("service.id");
+        String method = environment.getProperty("method");
+        String sendPhoneNumber = environment.getProperty("send.phone.number");
         String timestamp = Long.toString(System.currentTimeMillis()); 	// current timestamp (epoch)
         requestUrl += serviceId + requestUrlType;
         String apiUrl = hostNameUrl + requestUrl;
