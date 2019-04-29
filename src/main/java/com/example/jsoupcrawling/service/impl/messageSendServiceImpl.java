@@ -40,7 +40,7 @@ public class messageSendServiceImpl implements messageSendService {
         // String으로 body data 생성
         StringBuilder body = new StringBuilder();
         body.append("{\r\n");
-        body.append("  \"type\": \"SMS\",\r\n");
+        body.append("  \"type\": \"LMS\",\r\n");
         body.append("  \"contentType\": \"COMM\",\r\n");
         body.append("  \"countryCode\": \"82\",\r\n");
         body.append("  \"from\": \"");
